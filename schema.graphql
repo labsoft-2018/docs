@@ -1,0 +1,180 @@
+# There are two directives you can use to enhance fake data:
+#   - @fake
+#   - @examples
+# Each directive has autocompletion working so start by typing @
+
+enum OrderState{
+  WAITING_MERCHANT_CONFIRMATION
+  SEARCHING_CARRIER
+  IN_TRANSIT
+  DELIVERED
+}
+
+enum Role {
+  MERCHANT
+  CUSTOMER
+  CARRIER
+}
+
+interface Node {
+  id: ID!
+}
+
+type User implements Node {
+  id: ID!
+  email: String! @fake(type: email)
+  facebookId: String! @fake(type: uuid)
+  role: Role!
+  customer: Customer
+  carrier: Carrier
+  merchant: Merchant
+}
+
+type Location {
+  lat: Float! @fake(type:latitude)
+  lng: Float! @fake(type:longitude)
+}
+
+type Customer implements Node {
+  id: ID!
+  name: String @fake(type:fullName)
+  user: User!
+}
+
+type Carrier implements Node {
+  id: ID!
+  name: String @fake(type:fullName)
+  location: Location!
+  user: User!
+  socketChannel: String!
+}
+
+type Merchant implements Node {
+  id: ID!
+  name: String @fake(type:companyName)
+  location: Location!
+  user: User!
+  orders: [Order]
+}
+
+type Order {
+  state: OrderState!
+  carrier: Carrier
+  customer: Customer!
+  description: String! @fake(type:lorem)
+}
+
+type Viewer {
+	user: User!
+}
+
+type Query {
+  allMerchants: [Merchant]
+  carrier(id:String!): Carrier
+  merchant(id:String!): Merchant
+  customer(id:String!): Customer
+  order(id: String!): Order
+  viewer: Viewer
+}
+
+input SignInUserInput {
+  email: String!
+  password: String!
+}
+
+type SignInUserPayload {
+  user: User!
+}
+
+input SignUpUserInput {
+  email: String!
+  password: String!
+  name: String!
+  role: Role
+}
+
+type SignUpUserPayload {
+  user: User!
+}
+
+input CreateMerchantInput {
+ 	name: String! 
+}
+
+input CreateOrderInput {
+  name: String!
+}
+
+input CreateCarrierInput {
+  name: String!
+}
+
+type CreateMerchantPayload {
+  name: String!
+}
+
+type CreateOrderPayload {
+  name: String!
+}
+
+type CreateCarrierPayload {
+  name: String!
+}
+
+input DeleteMerchantInput {
+  id: ID!
+}
+
+input DeleteOrderInput {
+  id: ID!
+}
+
+input DeleteCarrierInput {
+  id: ID!
+}
+
+type DeleteMerchantPayload {
+  merchant: Merchant!
+}
+
+type DeleteOrderPayload {
+  order: Order!
+}
+
+type DeleteCarrierPayload {
+  carrier: Carrier!
+}
+
+type Mutation {
+  signUpUser(input: SignUpUserInput!): SignUpUserPayload
+  signInUser(input: SignInUserInput!): SignInUserPayload
+  createMerchant(input: CreateMerchantInput!): CreateMerchantPayload!
+  createOrder(input: CreateOrderInput!): CreateOrderPayload!
+  createCarrier(input: CreateCarrierInput!): CreateCarrierPayload!
+  deleteMerchant(input: DeleteMerchantInput!): DeleteMerchantPayload!
+  deleteOrder(input: DeleteOrderInput!): DeleteOrderPayload!
+  deleteCarrier(input: DeleteCarrierInput!): DeleteCarrierPayload!
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
